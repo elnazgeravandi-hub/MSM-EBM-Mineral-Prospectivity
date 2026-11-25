@@ -1,0 +1,35 @@
+# Published parameters transcribed from supplied Tables 1–3; not a validation of original code.
+seed: 42
+threshold: 0.5
+reference_block_m: 6000
+reference_buffer_m: 900
+spatial_configs: [[6000,900], [6000,600], [6000,1200], [3000,900], [9000,900]]
+models:
+  logistic:
+    C: 1.0
+    penalty: l2
+    solver: lbfgs
+    max_iter: 1000
+    class_weight: null
+  ebm:
+    interactions: 0
+    max_bins: 64
+    learning_rate: 0.025
+    max_rounds: 1200
+    outer_bags: 4
+    inner_bags: 0
+    validation_size: 0.15
+    early_stopping_rounds: 50
+    early_stopping_tolerance: 0.00001
+    min_samples_leaf: 4
+    max_leaves: 2
+    n_jobs: 1
+  catboost:
+    iterations: 300
+    depth: 5
+    learning_rate: 0.05
+    loss_function: Logloss
+    eval_metric: PRAUC
+    l2_leaf_reg: 5.0
+    verbose: false
+    thread_count: 1
