@@ -1,0 +1,44 @@
+
+name: unit-and-synthetic-smoke
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: python -m pytest -q
+
+      - name: Run four-model smoke test
+        run: python -m scripts.smoke_available_models
+
+      - name: Generate workflow
+        run: python -m scripts.make_workflow
+
+      - name: Verify monotonic constraints and full demo
+        run: python -m scripts.verify_full_demo
+
+      - name: Run full five-fold synthetic pipeline
+        run: python -m scripts.run_all --data synthetic --config configs/manuscript.yaml
+
+      - name: Upload synthetic outputs
+        if: success()
+        uses: actions/upload-artifact@v6
+        with:
+          name: synthetic-pipeline-results
+          path: outputs/synthetic_demo/
+          if-no-files-found: error
